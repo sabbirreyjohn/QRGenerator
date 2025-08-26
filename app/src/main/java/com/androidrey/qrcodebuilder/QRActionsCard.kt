@@ -1,4 +1,4 @@
-package com.example.qrcodebuilder
+package com.androidrey.qrcodebuilder
 
 import android.content.ContentValues
 import android.content.Context
@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -231,33 +232,29 @@ private fun ActionButton(
 private fun downloadQRCode(context: Context, bitmap: ImageBitmap, content: String) {
     val androidBitmap = bitmap.asAndroidBitmap()
     
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "qr_code_${System.currentTimeMillis()}.png")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/QR Codes")
-        }
-        
-        val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-        uri?.let {
-            context.contentResolver.openOutputStream(it)?.use { outputStream ->
-                androidBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+    try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // For Android 10+ (API 29+) - use MediaStore without permissions
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, "QR_Code_${System.currentTimeMillis()}.png")
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
             }
+            
+            val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+            uri?.let {
+                context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                    androidBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                }
+                Toast.makeText(context, "QR Code saved to Downloads", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // For older Android versions, use share as fallback since downloads need permissions
+            Toast.makeText(context, "Please use Share to save the QR code", Toast.LENGTH_SHORT).show()
+            shareQRCode(context, bitmap, content)
         }
-    } else {
-        val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        val qrDir = File(picturesDir, "QR Codes")
-        if (!qrDir.exists()) qrDir.mkdirs()
-        
-        val file = File(qrDir, "qr_code_${System.currentTimeMillis()}.png")
-        FileOutputStream(file).use { outputStream ->
-            androidBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        }
-        
-        // Notify media scanner
-        val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        intent.data = Uri.fromFile(file)
-        context.sendBroadcast(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "Failed to save QR code", Toast.LENGTH_SHORT).show()
     }
 }
 

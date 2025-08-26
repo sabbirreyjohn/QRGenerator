@@ -1,8 +1,14 @@
-package com.example.qrcodebuilder
+package com.androidrey.qrcodebuilder
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +57,7 @@ fun TextScreen() {
     var isGenerating by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     
     // Auto-scroll to QR code when generation completes
     LaunchedEffect(qrCodeBitmap) {
@@ -125,6 +132,7 @@ fun TextScreen() {
                     FilledTonalButton(
                         onClick = {
                             if (inputText.isNotBlank()) {
+                                focusManager.clearFocus() // Hide keyboard
                                 isGenerating = true
                                 qrCodeBitmap = QRGenerator.generateQRCode(inputText)
                                 isGenerating = false

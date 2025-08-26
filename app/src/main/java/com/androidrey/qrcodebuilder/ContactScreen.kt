@@ -1,8 +1,9 @@
-package com.example.qrcodebuilder
+package com.androidrey.qrcodebuilder
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -82,6 +83,7 @@ fun ContactScreen() {
     
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     
     // Auto-scroll to QR code when generation completes
     LaunchedEffect(qrCodeBitmap) {
@@ -274,6 +276,7 @@ fun ContactScreen() {
                             phoneError = if (phoneNumber.isBlank()) "Required" else validatePhone(phoneNumber)
                             
                             if (hasValidRequiredData(firstName, lastName, phoneNumber, firstNameError, lastNameError, phoneError)) {
+                                focusManager.clearFocus() // Hide keyboard
                                 isGenerating = true
                                 val vCardData = QRGenerator.generateContactVCard(
                                     firstName = firstName,

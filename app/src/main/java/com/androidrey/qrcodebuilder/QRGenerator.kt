@@ -1,4 +1,4 @@
-package com.example.qrcodebuilder
+package com.androidrey.qrcodebuilder
 
 import android.graphics.Bitmap
 import android.graphics.Color

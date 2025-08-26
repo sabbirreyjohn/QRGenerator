@@ -1,4 +1,4 @@
-package com.example.qrcodebuilder
+package com.androidrey.qrcodebuilder
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -47,7 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.qrcodebuilder.ui.theme.QRCodeBuilderTheme
+import com.androidrey.qrcodebuilder.ui.theme.QRCodeBuilderTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            QRCodeBuilderTheme {
+            QRCodeBuilderTheme(darkTheme = false) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

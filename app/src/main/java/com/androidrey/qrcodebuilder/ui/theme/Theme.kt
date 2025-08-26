@@ -1,4 +1,4 @@
-package com.example.qrcodebuilder.ui.theme
+package com.androidrey.qrcodebuilder.ui.theme
 
 import android.app.Activity
 import android.os.Build

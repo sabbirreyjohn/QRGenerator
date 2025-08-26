@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.example.qrcodebuilder"
+    namespace = "com.androidrey.qrcodebuilder"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.qrcodebuilder"
+        applicationId = "com.androidrey.qrcodebuilder"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -31,8 +31,8 @@ android {
         }
         
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -43,13 +43,6 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
         
-        create("benchmark") {
-            initWith(getByName("release"))
-            matchingFallbacks.add("release")
-            isDebuggable = false
-            signingConfig = signingConfigs.getByName("debug")
-            proguardFiles("benchmark-rules.pro")
-        }
     }
     
     compileOptions {
